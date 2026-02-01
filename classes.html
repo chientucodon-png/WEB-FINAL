@@ -1,0 +1,521 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Quản Lý Lớp Học - Trang Chủ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- Kiểm tra Dark Mode ngay lập tức để tránh FOUC (Flash of Unstyled Content) -->
+    <script>
+        (function () {
+            const isDark = localStorage.getItem('theme') === 'dark';
+            if (isDark) {
+                document.documentElement.classList.add('dark');
+                if (document.body) {
+                    document.body.classList.add('dark');
+                } else {
+                    document.addEventListener('DOMContentLoaded', function () {
+                        document.body.classList.add('dark');
+                    });
+                }
+            }
+        })();
+    </script>
+
+    <!-- COOKIES ANIMATION CSS - Load early for instant animation -->
+    <style>
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-20px) rotate(180deg);
+            }
+        }
+
+        @keyframes twinkle {
+
+            0%,
+            100% {
+                opacity: 0.3;
+            }
+
+            50% {
+                opacity: 0.8;
+            }
+        }
+
+        .cookie {
+            display: block;
+            width: 60px !important;
+            height: 60px !important;
+            line-height: 60px !important;
+            text-align: center;
+            overflow: hidden;
+            white-space: nowrap;
+            /* Ép dùng font hệ thống cho emoji để không bị nhảy khi font web load xong */
+            font-family: "Apple Color Emoji", "Segoe UI Emoji", sans-serif !important;
+            pointer-events: none !important;
+            opacity: 0.2 !important;
+            animation: float 15s infinite ease-in-out !important;
+            transition: none !important;
+        }
+
+        #floating-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+            /* Ép tàng hình ngay từ khi file CSS vừa load */
+            visibility: hidden;
+            opacity: 0;
+        }
+
+        /* Khi đã sẵn sàng, JS sẽ thêm class này vào */
+        #floating-container.ready {
+            visibility: visible;
+            opacity: 1;
+            transition: opacity 0.3s ease-in;
+        }
+
+        /* Tránh flicker bằng cách ẩn tạm thời */
+        html {
+            background: transparent;
+        }
+    </style>
+
+
+</head>
+
+<body>
+
+    <!-- FLOATING ANIMATION CONTAINER -->
+    <div id="floating-container"></div>
+
+    <!-- Khởi tạo cookies hoặc ngôi sao ngay lập tức sau khi floating-container được tạo -->
+    <script>
+        (function initAnimationImmediate() {
+            // Nếu đã chạy rồi thì không chạy nữa (tránh bị dựt khi load xong)
+            if (window.animationInitialized) return;
+            window.animationInitialized = true;
+
+            const container = document.getElementById('floating-container');
+            if (!container) return;
+
+            // Kiểm tra xem dark mode đã được kích hoạt hay chưa
+            const isDark = document.body.classList.contains('dark') || document.documentElement.classList.contains('dark');
+
+            let htmlContent = '';
+
+            if (isDark) {
+                // Tạo ngôi sao cho dark mode
+                const count = 40;
+                for (let i = 0; i < count; i++) {
+                    const left = (Math.random() * 90 + 5).toFixed(2);
+                    const top = (Math.random() * 90 + 5).toFixed(2);
+                    const delay = (Math.random() * 3).toFixed(2);
+                    const size = Math.floor(Math.random() * 15 + 10);
+
+                    htmlContent += `
+                        <div class="star" style="
+                            position: fixed;
+                            left: ${left}%; 
+                            top: ${top}%; 
+                            font-size: ${size}px;
+                            animation: twinkle 3s infinite;
+                            animation-delay: ${delay}s;
+                            will-change: opacity;
+                        ">✦</div>`;
+                }
+            } else {
+                // Tạo cookies cho light mode
+                const count = 12;
+                const icons = ['🍪', '🍘', '🍩'];
+                for (let i = 0; i < count; i++) {
+                    const icon = icons[Math.floor(Math.random() * icons.length)];
+                    const left = (Math.random() * 90 + 5).toFixed(2);
+                    const top = (Math.random() * 90 + 5).toFixed(2);
+                    const duration = (Math.random() * 10 + 10).toFixed(2);
+                    const delay = (Math.random() * -20).toFixed(2);
+                    const size = Math.floor(Math.random() * 10 + 25);
+
+                    htmlContent += `
+                        <div class="cookie" style="
+                            position: fixed;
+                            left: ${left}%; 
+                            top: ${top}%; 
+                            font-size: ${size}px;
+                            animation: float ${duration}s infinite ease-in-out;
+                            animation-delay: ${delay}s;
+                            will-change: transform;
+                        ">${icon}</div>`;
+                }
+            }
+
+            container.innerHTML = htmlContent;
+
+            // Đảm bảo CSS Dark Mode đã load xong và elements đã được chèn
+            requestAnimationFrame(() => {
+                // Thêm class ready để hiện ra mượt mà
+                container.classList.add('ready');
+            });
+        })();
+    </script>
+
+    <!-- VÙNG KÍCH HOẠT THANH TRỢ NĂNG (TOP) -->
+    <div class="hover-zone"></div>
+
+    <!-- THANH TRỢ NĂNG -->
+    <header class="top-bar">
+        <div class="tool-btn" onclick="toggleSearch()">🔍</div>
+        <div class="tool-btn" onclick="toggleDarkMode()">🌗</div>
+        <div class="tool-btn" onclick="startGuide()">❓</div>
+        <div class="tool-btn" onclick="goHome()">🏠</div>
+
+        <!-- Ô tìm kiếm với autocomplete -->
+        <div class="search-wrapper">
+            <input type="text" id="searchInput" placeholder="Tìm học sinh, giáo viên, kỷ niệm..."
+                oninput="handleSearchInput()" onkeydown="handleSearchKeydown(event)">
+            <ul id="searchSuggestions" class="search-suggestions"></ul>
+        </div>
+
+        <!-- Music Controls -->
+        <div class="music-controls">
+            <button onclick="prevSong()" class="tool-btn" title="Bài trước">⏮️</button>
+            <button id="playBtn" onclick="toggleMusic()" class="tool-btn" title="Phát/Tạm dừng">▶️</button>
+            <button onclick="nextSong()" class="tool-btn" title="Bài tiếp theo">⏭️</button>
+            <span id="songTitle"
+                style="font-size: 12px; margin-left: 10px; margin-right: 10px; opacity: 0.8; min-width: 120px;"></span>
+
+            <!-- Seek bar -->
+            <div class="seek-bar-container">
+                <span id="currentTime" style="font-size: 11px; opacity: 0.7;">0:00</span>
+                <input type="range" id="seekBar" class="seek-bar" min="0" max="100" value="0" oninput="seekSong()">
+                <span id="duration" style="font-size: 11px; opacity: 0.7;">0:00</span>
+            </div>
+
+            <audio id="bgMusic"></audio>
+        </div>
+    </header>
+
+    <!-- HOME SECTION - ĐÃ CHUYỂN SANG CLASSES.HTML -->
+    <!-- Phần này được tách riêng vào classes.html -->
+
+    <!-- KHUNG CHÍNH -->
+    <div id="classSection" class="container active">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="menu-item active" onclick="showSection('students', this)">👨‍🎓 Học sinh</div>
+            <div class="menu-item" onclick="showSection('gvcn', this)">👩‍🏫 GVCN</div>
+            <div class="menu-item" onclick="showSection('subjects', this)">📚 Giáo viên bộ môn</div>
+            <div class="menu-item" onclick="showSection('memories', this)">📖 Kỷ niệm</div>
+            <div class="menu-item" onclick="showSection('games', this)">🎮 Trò chơi</div>
+        </aside>
+
+
+        <!-- NỘI DUNG CHÍNH -->
+        <main class="content">
+
+            <!-- HỌC SINH -->
+            <section id="students" class="section active">
+                <h1>Danh sách học sinh</h1>
+                <div class="grid">
+                    <div class="card" onclick="openModal('hs1')">
+                        <img src="images/coder1.jpg">
+                        <span>Hoàng Lê Thiên Đức</span>
+                    </div>
+                    <div class="card" onclick="openModal('hs2')">
+                        <img src="images/bien.jpg">
+                        <span>Dương Thị Hương Giang</span>
+                    </div>
+                    <div class="card" onclick="openModal('hs3')">
+                        <img src="images/gojo.png">
+                        <span>Lục Thị Ngọc Khuyên</span>
+                    </div>
+                    <div class="card" onclick="openModal('hs4')">
+                        <img src="images/hoicham.jpg">
+                        <span>Lê Thị Hoàng My Thảo</span>
+                    </div>
+                    <div class="card" onclick="openModal('hs5')">
+                        <img src="images/may.jpg">
+                        <span>Nguyễn Minh Thư</span>
+                    </div>
+            </section>
+            <!-- GVCN -->
+            <section id="gvcn" class="section">
+                <h1>Giáo viên chủ nhiệm</h1>
+                <div class="grid">
+                    <div class="card" onclick="openModal('gvcn1')">
+                        <img src="images/covan.jpg">
+                        <span>Vũ Thị Vân</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- GIÁO VIÊN BỘ MÔN -->
+            <section id="subjects" class="section">
+                <h1>Giáo viên bộ môn</h1>
+                <div class="grid">
+                    <div class="card" onclick="openModal('toan')">
+                        <img src="images/cothao.jpg">
+                        <span>GV Toán</span>
+                    </div>
+                    <div class="card" onclick="openModal('gvbm2')">
+                        <img src="images/cokloan.jpg">
+                        <span>GV Ngữ Văn</span>
+                    </div>
+                    <div class="card" onclick="openModal('gvbm3')">
+                        <img src="images/thaythuan.jpg">
+                        <span>GV Kinh tế<br>-Pháp luật</span>
+                    </div>
+                    <div class="card" onclick="openModal('gvbm4')">
+                        <img src="images/cotrang.jpg">
+                        <span>GV Hóa Học </span>
+                    </div>
+                    <div class="card" onclick="openModal('gvbm5')">
+                        <img src="images/cothuat1.jpg">
+                        <span>GV Sinh Học</span>
+                    </div>
+                    <div class="card" onclick="openModal('gvbm6')">
+                        <img src="images/coyen.jpg">
+                        <span>GV Lịch Sử</span>
+                    </div>
+                    <div class="card" onclick="openModal('gvbm7')">
+                        <img src="images/conhung.jpg">
+                        <span>GV Tin Học</span>
+                    </div>
+                    <div class="card" onclick="openModal('gvbm8')">
+                        <img src="images/thayngoc.jpg">
+                        <span>GV Quốc Phòng <br>-An ninh</span>
+                    </div>
+                    <div class="card" onclick="openModal('gvbm9')">
+                        <img src="images/thaydiem.jpg">
+                        <span>GV Thể dục</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- KỶ NIỆM -->
+            <section id="memories" class="section">
+                <h1>Kỷ niệm</h1>
+                <div class="memories-container">
+                    <div class="memory-box" onclick="openMemoryType('images')">
+                        <div class="memory-icon">🖼️</div>
+                        <div class="memory-label">Hình Ảnh</div>
+                    </div>
+                    <div class="memory-box" onclick="openMemoryType('videos')">
+                        <div class="memory-icon">🎥</div>
+                        <div class="memory-label">Video</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- HÌNH ẢNH KỶ NIỆM -->
+            <section id="memoryImages" class="section">
+                <button class="btn-back" onclick="backToMemories()">← Quay lại</button>
+                <h1>📸 Hình Ảnh Kỷ Niệm</h1>
+                <div class="grid">
+                    <div class="card image-card" onclick="openModal('img1')">
+                        <img src="images/20,10(1).jpg">
+                        <span style="scale: 1.1">Ngày phụ nữ Việt Nam</span>
+                    </div>
+                    <div class="card image-card" onclick="openModal('img2')">
+                        <img src="images/20,10(2).jpg">
+                        <span style="scale: 1.1">Ngày 20/10</span>
+                    </div>
+                    <div class="card image-card" onclick="openModal('img3')">
+                        <img src="images/20,10(3).jpg">
+                        <span style="scale: 1.1;">Kỉ niệm 20/10</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIDEO KỶ NIỆM -->
+            <section id="memoryVideos" class="section">
+                <button class="btn-back" onclick="backToMemories()">← Quay lại</button>
+                <h1>🎬 Video Kỷ Niệm</h1>
+                <div class="grid">
+                    <div class="card video-card" onclick="openModal('vid1')">
+                        <video src="video/qtpn 1.mp4#t=0.1" preload="metadata" muted></video>
+                        <span style="scale: 1.1;">Video ngày 20/10</span>
+                    </div>
+                    <div class="card video-card" onclick="openModal('vid2')">
+                        <video src="video/qtpn 2.mp4#t=0.1" preload="metadata" muted></video>
+                        <span style="scale: 1.1;">Video lớp 12A4</span>
+                    </div>
+                    <div class="card video-card" onclick="openModal('vid3')">
+                        <video src="video/qtpn.mp4#t=0.1" preload="metadata" muted></video>
+                        <span style="scale: 1.1;">Kỷ niệm 20/10</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TRÒ CHƠI -->
+            <section id="games" class="section">
+                <h1>🎮 Trò Chơi Đoán Nhân Vật</h1>
+                <div id="game-menu">
+                    <div class="game-buttons">
+                        <button class="game-btn" onclick="startGame('classmate')">👨‍🎓 Đoán nhân vật trong
+                            lớp!?</button>
+                        <button class="game-btn" onclick="startGame('famous')">🌟 Đoán nhân vật nổi tiếng (Anime
+                            Or Real
+                            Life)</button>
+                    </div>
+
+                    <div class="leaderboard">
+                        <h3>🏆 BẢNG XẾP HẠNG</h3>
+                        <table id="leaderboardTable">
+                            <thead>
+                                <tr>
+                                    <th>Hạng</th>
+                                    <th>Tên</th>
+                                    <th>Điểm</th>
+                                </tr>
+                            </thead>
+                            <tbody id="leaderboardBody">
+                            </tbody>
+                        </table>
+                        <button onclick="clearLeaderboard()" class="btn-clear">Xóa lịch sử</button>
+                    </div>
+                </div>
+
+                <div id="game-play" style="display: none;">
+                    <div class="game-header">
+                        <span>Level: <b id="lvl">1</b>/5</span>
+                        <span>Điểm: <b id="score">0</b></span>
+                        <span>Mạng: <b id="lives">❤️❤️❤️</b></span>
+                        <button type="button" onclick="exitGameManual()" class="exit-btn"
+                            style="position: relative; z-index: 10;">Thoát & Lưu</button>
+                    </div>
+
+                    <div class="hint-container">
+                        <div id="hint1" class="hint-box locked">Gợi ý 1</div>
+                        <div id="hint2" class="hint-box locked">Gợi ý 2</div>
+                        <div id="hint3" class="hint-box locked">Gợi ý 3</div>
+                    </div>
+
+                    <button id="start-btn" onclick="startLevel()">BẮT ĐẦU CHƠI</button>
+
+                    <div id="answer-area" style="display: none;">
+                        <input type="text" id="userAnswer" placeholder="Nhập đáp án có dấu...">
+                        <button onclick="checkAnswer()" class="btn-submit">Gửi</button>
+                        <p>Còn <span id="hint-count">2</span> lượt mở gợi ý</p>
+                        <button id="next-hint-btn" onclick="openNextHint()">Mở gợi ý tiếp theo</button>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- ================= MODAL ================= -->
+    <div id="modal" class="modal">
+        <div class="modal-container">
+            <div class="modal-box">
+                <span class="close" onclick="closeModal()">×</span>
+                <img id="modal-img" style="display: block;">
+                <video id="modal-video" controls style="display: none;"></video>
+                <h2 id="modal-title"></h2>
+                <p id="modal-desc"></p>
+            </div>
+
+            <!-- 4 Action Buttons - Positioned to the right -->
+            <div class="modal-buttons-vertical">
+                <button class="modal-btn-vertical" onclick="showDetailedInfo('intro')" title="Giới thiệu chung">
+                    <span class="btn-icon">📋</span>
+                    <span class="btn-label">Giới thiệu</span>
+                </button>
+                <button class="modal-btn-vertical" onclick="showDetailedInfo('style')" title="Phong cách">
+                    <span class="btn-icon">🎨</span>
+                    <span class="btn-label">Phong cách</span>
+                </button>
+                <button class="modal-btn-vertical" onclick="showDetailedInfo('feature')" title="Đặc trưng">
+                    <span class="btn-icon">✨</span>
+                    <span class="btn-label">Đặc trưng</span>
+                </button>
+                <button class="modal-btn-vertical" onclick="showDetailedInfo('impact')" title="Dấu ấn">
+                    <span class="btn-icon">⭐</span>
+                    <span class="btn-label">Dấu ấn</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= DETAILED INFO MODAL ================= -->
+    <div id="detailModal" class="modal">
+        <div class="modal-box detail-modal-box">
+            <span class="close" onclick="closeDetailModal()">×</span>
+            <h2 id="detail-title"></h2>
+            <p id="detail-content"></p>
+            <button onclick="closeDetailModal()" class="btn-close-detail">Đóng</button>
+        </div>
+    </div>
+    <!-- =========================================================== -->
+    <div id="welcome" class="welcome-screen">
+        <div class="welcome-box">
+            <h1>👋 Chào mừng đến website lớp học</h1>
+            <p>Bạn muốn xem hướng dẫn sử dụng không?</p>
+            <div class="welcome-actions">
+                <button class="btn guide" onclick="startGuide()">Hướng dẫn</button>
+                <button class="btn skip" onclick="skipGuide()">Bỏ qua</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== GUIDE OVERLAY ===== -->
+    <div id="guideOverlay" class="guide-overlay">
+        <div class="guide-focus"></div>
+
+        <div class="guide-box">
+            <p id="guideText"></p>
+            <button onclick="nextGuide()">Tiếp tục</button>
+        </div>
+
+        <div class="guide-arrow"></div>
+    </div>
+
+    <!-- ===== FINISH SCREEN ===== -->
+    <div id="finishGuide" class="welcome-screen">
+        <div class="welcome-box">
+            <h1>🎉 Hoàn thành hướng dẫn!</h1>
+            <p>Bạn đã sẵn sàng sử dụng website</p>
+            <button class="btn guide" onclick="closeFinish()">Bắt đầu</button>
+        </div>
+    </div>
+
+    <!-- VÙNG KÍCH HOẠT THANH LIÊN KẾT (BOTTOM - 1/3 PHẢI) -->
+    <div class="hover-zone-bottom"></div>
+
+    <!-- THANH LIÊN KẾT PAGES -->
+    <footer class="bottom-bar">
+        <div class="tool-btn" onclick="goToPage('about.html')">ℹ️</div>
+        <div class="tool-btn" onclick="goToPage('contact.html')">📧</div>
+    </footer>
+
+    <!-- FILE JS -->
+    <script src="js/data.js"></script>
+    <script src="js/animations.js"></script>
+    <script src="js/music.js"></script>
+    <script src="js/navigation.js"></script>
+    <script src="js/modals.js"></script>
+    <script src="js/theme.js"></script>
+    <script src="js/search.js"></script>
+    <script src="js/guide.js"></script>
+    <script src="js/games.js"></script>
+    <script src="js/leaderboard.js"></script>
+    <script src="js/main.js"></script>
+
+</body>
+
+</html>
