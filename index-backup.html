@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Quản Lý Lớp Học - Trang Chủ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <!-- FLOATING ANIMATION CONTAINER -->
+    <div id="floating-container"></div>
+
+    <!-- VÙNG KÍCH HOẠT THANH TRỢ NĂNG (TOP) -->
+    <div class="hover-zone"></div>
+
+    <!-- THANH TRỢ NĂNG -->
+    <header class="top-bar">
+        <div class="tool-btn" onclick="toggleSearch()">🔍</div>
+        <div class="tool-btn" onclick="toggleDarkMode()">🌗</div>
+        <div class="tool-btn" onclick="startGuide()">❓</div>
+        <div class="tool-btn" onclick="goHome()">🏠</div>
+
+        <!-- Ô tìm kiếm với autocomplete -->
+        <div class="search-wrapper">
+            <input type="text" id="searchInput" placeholder="Tìm học sinh, giáo viên, kỷ niệm..."
+                oninput="handleSearchInput()" onkeydown="handleSearchKeydown(event)">
+            <ul id="searchSuggestions" class="search-suggestions"></ul>
+        </div>
+    </header>
+
+    <!-- HOME SECTION - ĐÃ CHUYỂN SANG CLASSES.HTML -->
+    <!-- Phần này được tách riêng vào classes.html -->
+
+    <!-- KHUNG CHÍNH -->
+    <div id="classSection" class="container active">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="menu-item active" onclick="showSection('students', this)">👨‍🎓 Học sinh</div>
+            <div class="menu-item" onclick="showSection('gvcn', this)">👩‍🏫 GVCN</div>
+            <div class="menu-item" onclick="showSection('subjects', this)">📚 Giáo viên bộ môn</div>
+            <div class="menu-item" onclick="showSection('memories', this)">📖 Kỷ niệm</div>
+        </aside>
+
+
+        <!-- NỘI DUNG CHÍNH -->
+        <main class="content">
+
+            <!-- HỌC SINH -->
+            <section id="students" class="section active">
+                <h1>Danh sách học sinh</h1>
+                <div class="grid">
+                    <div class="card" onclick="openModal('hs1')">
+                        <img src="https://i.pravatar.cc/150?img=1">
+                        <span>Nguyễn Văn A</span>
+                    </div>
+
+                    <div class="card add-card">+</div>
+                </div>
+            </section>
+
+            <!-- GVCN -->
+            <section id="gvcn" class="section">
+                <h1>Giáo viên chủ nhiệm</h1>
+                <div class="grid">
+                    <div class="card" onclick="openModal('gvcn1')">
+                        <img src="https://i.pravatar.cc/150?img=11">
+                        <span>Nguyễn Thị A</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- GIÁO VIÊN BỘ MÔN -->
+            <section id="subjects" class="section">
+                <h1>Giáo viên bộ môn</h1>
+                <div class="grid">
+                    <div class="card" onclick="openModal('toan')">
+                        <img src="https://i.pravatar.cc/150?img=21">
+                        <span>GV Toán</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- KỶ NIỆM -->
+            <section id="memories" class="section">
+                <h1>Kỷ niệm</h1>
+                <div class="memories-container">
+                    <div class="memory-box" onclick="openMemoryType('images')">
+                        <div class="memory-icon">🖼️</div>
+                        <div class="memory-label">Hình Ảnh</div>
+                    </div>
+                    <div class="memory-box" onclick="openMemoryType('videos')">
+                        <div class="memory-icon">🎥</div>
+                        <div class="memory-label">Video</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- HÌNH ẢNH KỶ NIỆM -->
+            <section id="memoryImages" class="section">
+                <div class="memory-header">
+                    <h1>📸 Hình Ảnh Kỷ Niệm</h1>
+                    <button class="btn-back" onclick="backToMemories()">← Quay lại</button>
+                </div>
+                <div class="grid">
+                    <div class="card image-card" onclick="openModal('img1')">
+                        <img src="https://picsum.photos/300/300?random=1">
+                        <span>Đà Lạt 2024</span>
+                    </div>
+                    <div class="card image-card" onclick="openModal('img2')">
+                        <img src="https://picsum.photos/300/300?random=2">
+                        <span>Chuyến đi</span>
+                    </div>
+                    <div class="card image-card" onclick="openModal('img3')">
+                        <img src="https://picsum.photos/300/300?random=3">
+                        <span>Kỉ niệm tập thể</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIDEO KỶ NIỆM -->
+            <section id="memoryVideos" class="section">
+                <div class="memory-header">
+                    <h1>🎬 Video Kỷ Niệm</h1>
+                    <button class="btn-back" onclick="backToMemories()">← Quay lại</button>
+                </div>
+                <div class="grid">
+                    <div class="card video-card" onclick="openModal('vid1')">
+                        <div class="video-icon">▶️</div>
+                        <span>Video Đà Lạt</span>
+                    </div>
+                    <div class="card video-card" onclick="openModal('vid2')">
+                        <div class="video-icon">▶️</div>
+                        <span>Video lớp 12A1</span>
+                    </div>
+                    <div class="card video-card" onclick="openModal('vid3')">
+                        <div class="video-icon">▶️</div>
+                        <span>Tập thể video</span>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- ================= MODAL ================= -->
+    <div id="modal" class="modal">
+        <div class="modal-box">
+            <span class="close" onclick="closeModal()">×</span>
+            <img id="modal-img">
+            <h2 id="modal-title"></h2>
+            <p id="modal-desc"></p>
+        </div>
+    </div>
+    <!-- =========================================================== -->
+    <div id="welcome" class="welcome-screen">
+        <div class="welcome-box">
+            <h1>👋 Chào mừng đến website lớp học</h1>
+            <p>Bạn muốn xem hướng dẫn sử dụng không?</p>
+            <div class="welcome-actions">
+                <button class="btn guide" onclick="startGuide()">Hướng dẫn</button>
+                <button class="btn skip" onclick="skipGuide()">Bỏ qua</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== GUIDE OVERLAY ===== -->
+    <div id="guideOverlay" class="guide-overlay">
+        <div class="guide-focus"></div>
+
+        <div class="guide-box">
+            <p id="guideText"></p>
+            <button onclick="nextGuide()">Tiếp tục</button>
+        </div>
+
+        <div class="guide-arrow"></div>
+    </div>
+
+    <!-- ===== FINISH SCREEN ===== -->
+    <div id="finishGuide" class="welcome-screen">
+        <div class="welcome-box">
+            <h1>🎉 Hoàn thành hướng dẫn!</h1>
+            <p>Bạn đã sẵn sàng sử dụng website</p>
+            <button class="btn guide" onclick="closeFinish()">Bắt đầu</button>
+        </div>
+    </div>
+
+    <!-- VÙNG KÍCH HOẠT THANH LIÊN KẾT (BOTTOM - 1/3 PHẢI) -->
+    <div class="hover-zone-bottom"></div>
+
+    <!-- THANH LIÊN KẾT PAGES -->
+    <footer class="bottom-bar">
+        <div class="tool-btn" onclick="goToPage('about.html')">ℹ️</div>
+        <div class="tool-btn" onclick="goToPage('contact.html')">📧</div>
+    </footer>
+
+    <!-- FILE JS -->
+    <script src="js/main.js"></script>
+
+</body>
+
+</html>

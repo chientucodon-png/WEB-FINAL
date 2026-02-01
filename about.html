@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giới Thiệu - Website Quản Lý Lớp Học Tiếng Việt</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- Kiểm tra Dark Mode ngay lập tức (tránh FOUC) -->
+    <script>
+        (function () {
+            const isDark = localStorage.getItem('theme') === 'dark';
+            if (isDark) {
+                document.documentElement.classList.add('dark');
+                if (document.body) {
+                    document.body.classList.add('dark');
+                } else {
+                    document.addEventListener('DOMContentLoaded', function () {
+                        document.body.classList.add('dark');
+                    });
+                }
+            }
+        })();
+    </script>
+
+    <style>
+        .about-content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px;
+            line-height: 1.8;
+        }
+
+        .about-content h2 {
+            color: var(--accent-color);
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        .about-content p {
+            text-align: justify;
+            margin-bottom: 15px;
+        }
+
+        .about-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .about-list li {
+            padding: 10px 0;
+            padding-left: 30px;
+            position: relative;
+        }
+
+        .about-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            padding: 10px 20px;
+            background: var(--accent-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: 0.3s ease;
+        }
+
+        .back-link:hover {
+            transform: translateY(-2px);
+        }
+
+        .map-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .map-container iframe {
+            max-width: 100%;
+            height: 300px;
+            border-radius: 8px;
+        }
+
+        /* Floating container visibility control to avoid FOUC */
+        #floating-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+            visibility: hidden;
+            opacity: 0;
+        }
+
+        #floating-container.ready {
+            visibility: visible;
+            opacity: 1;
+            transition: opacity 0.3s ease-in;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- FLOATING ANIMATION CONTAINER -->
+    <div id="floating-container"></div>
+
+    <!-- VÙNG KÍCH HOẠT THANH TRỢ NĂNG (TOP) -->
+    <div class="hover-zone"></div>
+
+    <!-- THANH TRỢ NĂNG -->
+    <header class="top-bar">
+        <div class="tool-btn" onclick="toggleDarkMode()">🌗</div>
+        <div class="tool-btn" onclick="goHome()">🏠</div>
+
+        <!-- Music Controls -->
+        <div class="music-controls">
+            <button onclick="prevSong()" class="tool-btn" title="Bài trước">⏮️</button>
+            <button id="playBtn" onclick="toggleMusic()" class="tool-btn" title="Phát/Tạm dừng">▶️</button>
+            <button onclick="nextSong()" class="tool-btn" title="Bài tiếp theo">⏭️</button>
+            <span id="songTitle"
+                style="font-size: 12px; margin-left: 10px; margin-right: 10px; opacity: 0.8; min-width: 120px;"></span>
+
+            <!-- Seek bar -->
+            <div class="seek-bar-container">
+                <span id="currentTime" style="font-size: 11px; opacity: 0.7;">0:00</span>
+                <input type="range" id="seekBar" class="seek-bar" min="0" max="100" value="0" oninput="seekSong()">
+                <span id="duration" style="font-size: 11px; opacity: 0.7;">0:00</span>
+            </div>
+
+            <audio id="bgMusic"></audio>
+        </div>
+    </header>
+
+    <!-- NỘI DUNG CHÍNH -->
+    <div class="about-content">
+        <a href="classes.html?class=12A1" class="back-link">← Quay lại lớp học</a>
+
+        <h1>📚 Giới Thiệu Website Quản Lý Lớp Học Tiếng Việt</h1>
+
+        <h2>Mục Đích Của Website</h2>
+        <p>
+            Website Quản Lý Lớp Học Tiếng Việt được thiết kế nhằm tạo ra một nền tảng trực tuyến hiện đại, thân thiện
+            giúp quản lý thông tin lớp học một cách hiệu quả. Từ danh sách học sinh, thông tin giáo viên,
+            bộ sưu tập kỷ niệm cho đến trình phát nhạc tích hợp.
+        </p>
+
+        <h2>Tính Năng Chính</h2>
+        <ul class="about-list">
+            <li>👨‍🎓 Quản lý danh sách học sinh chi tiết</li>
+            <li>👩‍🏫 Lưu thông tin giáo viên chủ nhiệm và bộ môn</li>
+            <li>📸 Lưu trữ hình ảnh kỷ niệm của lớp</li>
+            <li>🎥 Quản lý các video lớp học</li>
+            <li>🔍 Tìm kiếm nhanh với autocomplete thông minh</li>
+            <li>🌗 Chế độ Dark Mode thoải mái cho mắt</li>
+            <li>❓ Hướng dẫn sử dụng tương tác</li>
+            <li>🎵 Trình phát nhạc tích hợp với danh sách phát</li>
+            <li>🎮 Mini-games và bảng xếp hạng</li>
+            <li>✨ Animations động (cookies, stars)</li>
+        </ul>
+
+        <h2>Cách Sử Dụng</h2>
+        <p>
+            Khi lần đầu truy cập website, hệ thống sẽ tự động hiển thị hướng dẫn chi tiết cho bạn.
+            Bạn có thể:
+        </p>
+        <ul class="about-list">
+            <li>Chọn lớp từ trang chủ để vào trang chi tiết</li>
+            <li>Dùng sidebar để chuyển giữa Học sinh, Giáo viên, Kỷ niệm, Nhạc, Games</li>
+            <li>Click vào ảnh đại diện để xem thông tin từng người</li>
+            <li>Sử dụng chức năng tìm kiếm (🔍) để tìm nhanh</li>
+            <li>Bật Dark Mode (🌗) để thoải mái học tập buổi tối</li>
+            <li>Nghe nhạc với trình phát tích hợp (🎵)</li>
+            <li>Chơi mini-games và xem bảng xếp hạng</li>
+            <li>Xem lại hướng dẫn bất cứ lúc nào (❓)</li>
+        </ul>
+
+        <h2>Công Nghệ Sử Dụng</h2>
+        <p>
+            Website được xây dựng với các công nghệ web hiện đại:
+        </p>
+        <ul class="about-list">
+            <li>HTML5 - Cấu trúc trang web</li>
+            <li>CSS3 - Tạo giao diện đẹp và responsive</li>
+            <li>JavaScript Vanilla - Tương tác và chức năng</li>
+            <li>Font Quicksand - Phông chữ tròn trịa, dễ đọc</li>
+            <li>requestAnimationFrame - Animations mượt mà</li>
+        </ul>
+
+        <h2>Danh sách thành viên thực hiện website</h2>
+        <ul class="about-list">
+            <li>Hoàng Lê Thiên Đức - HTML, CSS, JS.</li>
+            <li>Dương Thị Hương Giang - Thông tin, HTML, JS.</li>
+            <li>Lục Thị Ngọc Khuyên - Thông tin, HTML.</li>
+            <li>Lê Thị Hoàng My Thảo - Thông tin, JS.</li>
+            <li>Nguyễn Minh Thư - Thông tin, HTML, JS.</li>
+        </ul>
+
+        <h2>Vị Trí Trường Học</h2>
+        <div class="map-container">
+            <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3905.6898849912027!2d108.41598467505708!3d11.786871888430102!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x317140707dd9c671%3A0x16482e70966b1064!2zVHLGsMahzIBuZyBUSFBUIENodSBWxINuIEFu!5e0!3m2!1svi!2s!4v1769908550275!5m2!1svi!2s"
+                width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+
+        <h2>Liên Hệ & Hỗ Trợ</h2>
+        <p>
+            Nếu bạn có bất kỳ câu hỏi hoặc gợi ý nào để cải thiện website,
+            vui lòng <a href="contact.html" style="color: var(--accent-color); text-decoration: none;">liên hệ với chúng
+                tôi</a>.
+        </p>
+
+        <p
+            style="margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--border-color); text-align: center; opacity: 0.7;">
+            <small>© 2026 - Website Quản Lý Lớp Học. Được tạo bởi học sinh với ❤️</small>
+        </p>
+    </div>
+
+    <!-- FLOATING: initialize matching current theme and show with ready class -->
+    <script>
+        (function () {
+            function random(min, max) { return Math.random() * (max - min) + min; }
+
+            const container = document.getElementById('floating-container');
+            if (!container) return;
+
+            function buildCookiesHtml() {
+                const icons = ['🍪', '🍘', '🍩'];
+                let html = '';
+                for (let i = 0; i < 12; i++) {
+                    const icon = icons[Math.floor(Math.random() * icons.length)];
+                    const left = (Math.random() * 85 + 5).toFixed(2);
+                    const top = (Math.random() * 85 + 5).toFixed(2);
+                    const dur = (Math.random() * 9 + 6).toFixed(2);
+                    const delay = (Math.random() * -15).toFixed(2);
+                    const size = Math.floor(Math.random() * 22 + 20);
+                    html += `<div class="cookie" style="position:fixed; left:${left}vw; top:${top}vh; font-size:${size}px; animation:float ${dur}s infinite ease-in-out; animation-delay:${delay}s; will-change:transform;">${icon}</div>`;
+                }
+                return html;
+            }
+
+            function buildStarsHtml() {
+                let html = '';
+                for (let i = 0; i < 40; i++) {
+                    const left = (Math.random() * 85 + 5).toFixed(2);
+                    const top = (Math.random() * 85 + 5).toFixed(2);
+                    const delay = (Math.random() * 3).toFixed(2);
+                    const size = Math.floor(Math.random() * 15 + 10);
+                    html += `<div class="star" style="position:fixed; left:${left}vw; top:${top}vh; font-size:${size}px; animation:twinkle 3s infinite; animation-delay:${delay}s; will-change:opacity;">✦</div>`;
+                }
+                return html;
+            }
+
+            // Apply according to stored theme (or current class)
+            const isDark = localStorage.getItem('theme') === 'dark' || document.documentElement.classList.contains('dark');
+            container.classList.remove('ready');
+            container.innerHTML = isDark ? buildStarsHtml() : buildCookiesHtml();
+
+            // Add handlers used by top-bar
+            window.toggleDarkMode = function () {
+                const isNowDark = document.documentElement.classList.toggle('dark');
+                localStorage.setItem('theme', isNowDark ? 'dark' : 'light');
+                container.classList.remove('ready');
+                if (isNowDark) container.innerHTML = buildStarsHtml(); else container.innerHTML = buildCookiesHtml();
+                requestAnimationFrame(() => container.classList.add('ready'));
+            };
+
+            window.goHome = function () { window.location.href = 'classes.html?class=12A1'; };
+            window.goToPage = function (page) { window.location.href = page; };
+
+            // Show when ready
+            requestAnimationFrame(() => container.classList.add('ready'));
+        })();
+    </script>
+
+    <style>
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-20px) rotate(180deg);
+            }
+        }
+
+        @keyframes twinkle {
+
+            0%,
+            100% {
+                opacity: 0.3;
+            }
+
+            50% {
+                opacity: 0.8;
+            }
+        }
+    </style>
+
+    <!-- VÙNG KÍCH HOẠT THANH LIÊN KẾT (BOTTOM - 1/3 PHẢI) -->
+    <div class="hover-zone-bottom"></div>
+
+    <!-- THANH LIÊN KẾT PAGES -->
+    <footer class="bottom-bar">
+        <div class="tool-btn" onclick="goToPage('about.html')">ℹ️</div>
+        <div class="tool-btn" onclick="goToPage('contact.html')">📧</div>
+    </footer>
+
+    <!-- Music Player (ẩn) -->
+    <audio id="bgMusic" preload="none"></audio>
+    <script src="js/music.js"></script>
+
+    <!-- FILE JS -->
+    <script src="js/main.js"></script>
+
+</body>
+
+</html>

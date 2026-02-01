@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chọn Lớp Học - Website Quản Lý Lớp Học</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            text-align: center;
+            color: white;
+        }
+
+        h1 {
+            font-size: 42px;
+            margin-bottom: 15px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            font-weight: 700;
+        }
+
+        .subtitle {
+            font-size: 18px;
+            margin-bottom: 50px;
+            opacity: 0.95;
+        }
+
+        .class-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 25px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .class-box {
+            background: white;
+            padding: 30px 20px;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+            overflow: hidden;
+            text-decoration: none;
+        }
+
+        .class-box::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: rgba(102, 126, 234, 0.1);
+            opacity: 0;
+            transition: 0.3s ease;
+        }
+
+        .class-box:hover::before {
+            opacity: 1;
+        }
+
+        .class-box:hover {
+            transform: translateY(-8px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+        }
+
+        .class-box.active {
+            border: 3px solid #2ecc71;
+        }
+
+        .class-box.coming-soon {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .class-box.coming-soon:hover {
+            transform: none;
+            opacity: 0.85;
+        }
+
+        .class-icon {
+            font-size: 32px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .class-status {
+            font-size: 14px;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .class-box.active .class-status {
+            color: #2ecc71;
+        }
+
+        .class-box.coming-soon .class-status {
+            color: #e74c3c;
+        }
+
+        .floating-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .cookie {
+            position: fixed;
+            opacity: 0.2;
+            z-index: 0;
+            animation: float 15s infinite ease-in-out;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-20px) rotate(180deg);
+            }
+        }
+
+        .class-grid {
+            position: relative;
+            z-index: 1;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- FLOATING ANIMATION CONTAINER -->
+    <div class="floating-container" id="floating-container"></div>
+
+    <!-- NỘI DUNG CHÍNH -->
+    <div class="container">
+        <h1>🎓 Chào mừng đến Website Quản Lý Lớp Học</h1>
+        <p class="subtitle">Chọn lớp của bạn để tiếp tục</p>
+
+        <div class="class-grid">
+            <a href="index.html?class=10A1" class="class-box">
+                <div class="class-icon">10A1</div>
+                <div class="class-status">Đang hoạt động</div>
+            </a>
+
+            <a href="index.html?class=11A1" class="class-box">
+                <div class="class-icon">11A1</div>
+                <div class="class-status">Đang hoạt động</div>
+            </a>
+
+            <a href="index.html?class=12A1" class="class-box active">
+                <div class="class-icon">12A1</div>
+                <div class="class-status">Đang hoạt động</div>
+            </a>
+        </div>
+    </div>
+
+    <!-- MODAL THÔNG BÁO -->
+    <div id="comingSoonModal" style="
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.6);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+    ">
+        <div style="
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            animation: zoom 0.4s ease;
+            max-width: 400px;
+            color: #333;
+        ">
+            <h2 style="margin-bottom: 15px; color: #667eea;">⏰ Đang Cập Nhật</h2>
+            <p style="margin-bottom: 20px; color: #666;">Lớp này sẽ sớm được kích hoạt. Vui lòng quay lại sau!</p>
+            <button onclick="closeComingSoon()" style="
+                padding: 10px 30px;
+                background: #667eea;
+                color: white;
+                border: none;
+                border-radius: 8px;
+                cursor: pointer;
+                font-weight: 600;
+                transition: 0.3s ease;
+            " onmouseover="this.style.background='#764ba2'" onmouseout="this.style.background='#667eea'">
+                Đóng
+            </button>
+        </div>
+    </div>
+
+    <style>
+        @keyframes zoom {
+            from {
+                transform: scale(0.7);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+    </style>
+
+    <script>
+        function random(min, max) {
+            return Math.random() * (max - min) + min;
+        }
+
+        function createCookies() {
+            const container = document.getElementById('floating-container');
+            container.innerHTML = '';
+            const count = 12;
+            for (let i = 0; i < count; i++) {
+                const el = document.createElement('div');
+                el.classList.add('cookie');
+                const icons = ['🍪', '🍘', '🍩'];
+                el.innerText = icons[Math.floor(Math.random() * icons.length)];
+                el.style.left = random(0, 100) + 'vw';
+                el.style.top = random(0, 100) + 'vh';
+                el.style.animationDuration = random(6, 15) + 's';
+                el.style.fontSize = random(20, 50) + 'px';
+                container.appendChild(el);
+            }
+        }
+
+        function showComingSoon() {
+            document.getElementById('comingSoonModal').style.display = 'flex';
+        }
+
+        function closeComingSoon() {
+            document.getElementById('comingSoonModal').style.display = 'none';
+        }
+
+        // Khởi tạo animations
+        createCookies();
+
+        // Đóng modal khi click ngoài
+        document.getElementById('comingSoonModal').addEventListener('click', function (e) {
+            if (e.target === this) {
+                closeComingSoon();
+            }
+        });
+    </script>
+
+</body>
+
+</html>
